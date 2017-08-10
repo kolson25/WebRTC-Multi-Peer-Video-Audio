@@ -1,0 +1,48 @@
+{
+  "name": "Web RTC Multi-Peer",
+  "version": "1.0.0",
+  "description": "Description goes here",
+  "main": "gulpfile.js",
+  "scripts": {
+    "watch:ui": "gulp watch"
+  },
+  "repository": {
+    "type": "git"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "autoprefixer": "^6.7.6",
+    "babel-polyfill": "^6.23.0",
+    "cssnano": "^3.10.0",
+    "gulp": "^3.9.0",
+    "gulp-babel": "^6.1.2",
+    "gulp-concat": "^2.6.0",
+    "gulp-debug": "^2.1.0",
+    "gulp-if": "^1.2.5",
+    "gulp-jshint": "^1.11.2",
+    "gulp-plumber": "^1.0.1",
+    "gulp-postcss": "^6.3.0",
+    "gulp-sass": "^3.1.0",
+    "gulp-sourcemaps": "^1.11.0",
+    "gulp-streamify": "^1.0.2",
+    "gulp-strip-line": "0.0.1",
+    "gulp-uglify": "^1.4.1",
+    "url-search-params-polyfill": "^2.0.0",
+    "vinyl-source-stream": "^1.1.0",
+    "vue": "^2.4.1",
+    "vue-template-compiler": "^2.4.1",
+    "vuex": "^2.3.1"
+  },
+  "devDependencies": {
+    "babel-core": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.23.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "babelify": "^7.3.0",
+    "browserify": "^14.3.0",
+    "chalk": "^1.1.3",
+    "vueify": "^9.4.1"
+  }
+}
