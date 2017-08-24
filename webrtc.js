@@ -122,25 +122,14 @@ function getUserMediaSuccess(stream) {
 
 function gotRemoteStream(event, id) {
 
-    console.log(socketConnections);
-
-    var videos = document.querySelectorAll('video');
-
-    //TODO:: do I need this now that I have disconnect?
-    [].forEach.call(videos, function(video){
-        if(socketConnections.indexOf(video.getAttribute('data-socket')) < 0 && video.id != 'localVideo'){
-            var parentDiv = video.parentElement;
-            video.parentElement.parentElement.removeChild(parentDiv);
-        }
-    });
-
-    var video = document.createElement('video');
-    var div = document.createElement('div');
+    var videos = document.querySelectorAll('video'),
+        video  = document.createElement('video'),
+        div    = document.createElement('div')
 
     video.setAttribute('data-socket', id);
-    video.src = window.URL.createObjectURL(event.stream);
+    video.src      = window.URL.createObjectURL(event.stream);
     video.autoplay = true; 
-    video.muted = true;
+    video.muted    = true;
     
     div.appendChild(video);      
     document.querySelector('.videos').appendChild(div);      
@@ -151,7 +140,7 @@ function gotMessageFromServer(fromId, message) {
     //Parse the incoming signal
     var signal = JSON.parse(message)
 
-    //TODO:: Do I need this conditional?  If I use emit on the server it should never be from my socket
+    //Make sure it's not coming from yourself
     if(fromId != socketId) {
 
         if(signal.sdp){            
@@ -164,13 +153,10 @@ function gotMessageFromServer(fromId, message) {
                     }).catch(e => console.log(e));
                 }
             }).catch(e => console.log(e));
-
-            console.log(connections);
         }
     
         if(signal.ice) {
             connections[fromId].addIceCandidate(new RTCIceCandidate(signal.ice)).catch(e => console.log(e));
         }                
     }
-
 }
