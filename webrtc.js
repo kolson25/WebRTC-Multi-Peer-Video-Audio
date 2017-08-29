@@ -3,8 +3,6 @@ var firstPerson = false;
 var socketCount = 0;
 var socketId;
 var localStream;
-var socketConnections;
-
 var connections = [];
 
 var peerConnectionConfig = {
@@ -44,34 +42,37 @@ function pageReady() {
 
 
                     socket.on('user-joined', function(id, count, clients){
-
-                        socketConnections = clients;
-
-                        clients.forEach(function(socketid) {
-
-
-                            //TODO:: This is redundant to start()
-                            if(!connections[socketid]){
-                                connections[socketid] = new RTCPeerConnection(peerConnectionConfig);
+                        clients.forEach(function(socketListId) {
+                            if(!connections[socketListId]){
+                                connections[socketListId] = new RTCPeerConnection(peerConnectionConfig);
                                 //Wait for their ice candidate       
-                                connections[socketid].onicecandidate = function(){
+                                connections[socketListId].onicecandidate = function(){
                                     if(event.candidate != null) {
                                         console.log('SENDING ICE');
-                                        socket.emit('signal', socketid, JSON.stringify({'ice': event.candidate}));
+                                        socket.emit('signal', socketListId, JSON.stringify({'ice': event.candidate}));
                                     }
                                 }
 
                                 //Wait for their video stream
-                                connections[socketid].onaddstream = function(){
-                                    gotRemoteStream(event, socketid)
+                                connections[socketListId].onaddstream = function(){
+                                    gotRemoteStream(event, socketListId)
                                 }    
 
                                 //Add the local video stream
-                                connections[socketid].addStream(localStream);                                                                
+                                connections[socketListId].addStream(localStream);                                                                
                             }
                         });
-                        start(id, count);
+
+                        //Create an offer to connect with your local description
                         
+                        if(count >= 2){
+                            connections[id].createOffer().then(function(description){
+                                connections[id].setLocalDescription(description).then(function() {
+                                    // console.log(connections);
+                                    socket.emit('signal', id, JSON.stringify({'sdp': connections[id].localDescription}));
+                                }).catch(e => console.log(e));        
+                            });
+                        }
                     });                    
                 })       
         
@@ -81,44 +82,10 @@ function pageReady() {
     } 
 }
 
-function start(id, count){
-
-    //When someone joins, create a new peer connection with them
-    connections[id] = new RTCPeerConnection(peerConnectionConfig);
-
-    //Wait for their ice candidate       
-    connections[id].onicecandidate = function(){
-        if(event.candidate != null) {
-            console.log('SENDING ICE');
-            socket.emit('signal', id, JSON.stringify({'ice': event.candidate}));
-        }
-    }
-
-    //Wait for their video stream
-    connections[id].onaddstream = function(){
-        gotRemoteStream(event, id)
-    }  
-
-    //Add the local video stream
-    connections[id].addStream(localStream);
-
-    //Create an offer to connect with your local description
-    
-    if(count >= 2){
-        connections[id].createOffer().then(function(description){
-            connections[id].setLocalDescription(description).then(function() {
-                // console.log(connections);
-                socket.emit('signal', id, JSON.stringify({'sdp': connections[id].localDescription}));
-            }).catch(e => console.log(e));        
-        });
-    }
-}
-
 function getUserMediaSuccess(stream) {
     localStream = stream;
     localVideo.src = window.URL.createObjectURL(stream);
 }
-
 
 function gotRemoteStream(event, id) {
 
