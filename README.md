@@ -2,6 +2,8 @@
 
 This library creates a traditional multi-peer communication using a single signaling server.  Videos are added to the screen as users join and accept use of their cameras and microphones.  As users disconnect, their videos are removed from all sessions.
 
+![Demo](readme-attachments/demo.gif)
+
 ## 1. Setup The Signaling Server
 The signaling server can be created and run with nodejs.  Realtime communication is achieved using socket.io
 1. Copy the server folder onto your server
